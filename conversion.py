@@ -10,7 +10,7 @@ def get_rgb(img):
     for i in range(height):
         for j in range(width):
             # print(pix[j,i])
-            rgb.append(pix[j,i][:-1])
+            rgb.append(pix[j, i][:-1])
     return rgb
 
 def draw_image(rgb, title, img_desc):
@@ -52,6 +52,6 @@ def convert_yuv_to_rgb(y, u, v):
         r = y[i] + v[i]
         g = y[i] - ((kr*v[i] + kb*u[i]) / (1-kr-kb))
         b = y[i] + u[i]
-        rgb.append((int(r), int(g), int(b)))
+        rgb.append((int(round(r)), int(round(g)), int(round(b))))
 
     return rgb

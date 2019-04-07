@@ -1,5 +1,6 @@
 from conversion import *
 from math_functions import *
+from image_diff import *
 import numpy as np
 import os
 import random
@@ -38,6 +39,7 @@ def code_picture(filename):
 
     old_rgb = convert_yuv_to_rgb(y, old_u, old_v)
     new_rgb = convert_yuv_to_rgb(y, new_u, new_v)
+    print('compare rgb:', is_rgb_equal(rgb, old_rgb, show_diff=True), is_rgb_equal(old_rgb, new_rgb, show_diff=True))
 
     T = 0
     F = 0
@@ -99,15 +101,17 @@ if __name__ == '__main__':
         new_k = [np.float16(params[0][0]), np.float16(params[1][0])]
         first_k = [global_params[i][0][0][0], global_params[i][0][1][0]]
         second_k = [global_params[i][1][0][0], global_params[i][1][1][0]]
-        print(first_k, second_k, new_k)
+        print('k: ', first_k, second_k, new_k)
 
         diff_first = abs(first_k[0] - new_k[0]) + abs(first_k[1] - new_k[1])
         diff_second = abs(second_k[0] - new_k[0]) + abs(second_k[1] - new_k[1])
+        print(fl, ' diff: ', diff_first, diff_second)
 
         decrypted_key += 'x' if diff_first == diff_second else '0' if diff_first < diff_second else '1'
 
     x_count = 0
     same = True
+    print('keys: ', key, decrypted_key)
     for i in range(len(key)):
         if decrypted_key[i] == 'x':
             x_count += 1
