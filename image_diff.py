@@ -2,25 +2,16 @@
 # python image_diff.py --first images/original_01.png --second images/modified_01.png
 
 from skimage.measure import compare_ssim
-import argparse
 import imutils
 import cv2
+import os
+from PIL import Image
 
-def get_ssim(file1, file2):
-    first = 'pictures/' + file1
-    second = 'pictures/' + file2
-    # construct the argument parse and parse the arguments
-    # ap = argparse.ArgumentParser()
-    # ap.add_argument("-f", "--first", required=True, help="first input image")
-    # ap.add_argument("-s", "--second", required=True, help="second")
-    # args = vars(ap.parse_args())
+from conversion import *
 
-    # load the two input images
-    # imageA = cv2.imread(args["first"])
-    # imageB = cv2.imread(args["second"])
-
-    imageA = cv2.imread(first)
-    imageB = cv2.imread(second)
+def get_ssim(file1, file2, dir=''):
+    imageA = cv2.imread(os.path.join(dir, file1))
+    imageB = cv2.imread(os.path.join(dir, file2))
 
     # convert the images to grayscale
     grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
@@ -30,7 +21,8 @@ def get_ssim(file1, file2):
     # images, ensuring that the difference image is returned
     (score, diff) = compare_ssim(grayA, grayB, full=True)
     diff = (diff * 255).astype("uint8")
-    print('{} and {}: '.format(file1, file2) + 'SSIM = {}'.format(score))
+    # print('{} and {}: '.format(file1, file2) + 'SSIM = {}'.format(score))
+    return score
 
     # threshold the difference image, followed by finding contours to
     # obtain the regions of the two input images that differ
@@ -67,9 +59,20 @@ def is_rgb_equal(rgb1, rgb2, show_diff=False):
 
     return False
 
+def total_comparison(dir):
+    files = os.listdir(dir)
+    for f in files:
+        if f[0] != '0':
+            continue
 
-for i in range(8):
-    num = str(i)
-    print('\n' + num + '.png')
-    get_ssim(num + '.png', num + '_1.png')
-    get_ssim(num + '_1.png', num + '_2.png')
+        file, rgb = [], []
+        for i in range(3):
+            file.append(str(i) + f[1:])
+            img = Image.open(os.path.join(dir, file[i]))
+            rgb.append(get_rgb(img))
+            img.close()
+
+        print(file[0][2:])
+        print('av1:\tSSIM = {}\tRGB_equal = {}'.format(get_ssim(file[0], file[1], dir), is_rgb_equal(rgb[0], rgb[1])))
+        print('wmk:\tSSIM = {}\tRGB_equal = {}'.format(get_ssim(file[1], file[2], dir), is_rgb_equal(rgb[1], rgb[2])))
+        print()

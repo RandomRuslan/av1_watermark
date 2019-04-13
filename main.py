@@ -1,89 +1,26 @@
 from conversion import *
 from math_functions import *
+from pictures import *
 from image_diff import *
-import numpy as np
-import os
-import random
 
-
-def code_picture(filename):
-    img = Image.open('pictures/' + filename)
-    img_desc = {
-        'size': img.size,
-        'mode': img.mode
-    }
-    rgb = get_rgb(img)
-    # print(rgb)
-    img.close()
-
-    y, u, v = convert_rgb_to_yuv(rgb)
-    # print(y, u, v, sep='\n')
-
-    params = get_all_params(y, u, v)
-    # print(params)
-
-    old_params = []
-    new_params = []
-    for k, b in params:
-        # old_params.append([np.float32(k), np.float32(b)])
-        # new_params.append([inc_float(np.float32(k)), np.float32(b)])
-        old_params.append([np.float16(k), np.float16(b)])
-        new_params.append([inc_float(np.float16(k)), np.float16(b)])
-    global_params.append([old_params, new_params])
-
-    old_u = [old_params[0][0] * x + old_params[0][1] for x in y]
-    old_v = [old_params[1][0] * x + old_params[1][1] for x in y]
-    new_u = [new_params[0][0] * x + new_params[0][1] for x in y]
-    new_v = [new_params[1][0] * x + new_params[1][1] for x in y]
-    # print(u, old_u, new_u, '', v, old_v, new_v, sep='\n')
-
-    old_rgb = convert_yuv_to_rgb(y, old_u, old_v)
-    new_rgb = convert_yuv_to_rgb(y, new_u, new_v)
-    print('compare rgb:', is_rgb_equal(rgb, old_rgb, show_diff=True), is_rgb_equal(old_rgb, new_rgb, show_diff=True))
-
-    T = 0
-    F = 0
-    for i in range(len(rgb)):
-        if new_rgb[i] != old_rgb[i] or abs(new_rgb[i][0] - old_rgb[i][0]) > 1 or abs(new_rgb[i][1] - old_rgb[i][1]) > 1 or abs(new_rgb[i][2] - old_rgb[i][2]) > 1:
-            F += 1
-            # print(i, new_rgb[i], old_rgb[i])
-        else:
-            T += 1
-    # print(T, F)
-
-    # print(rgb, old_rgb, new_rgb, sep='\n')
-    # y_old = get_luma
-    draw_image(old_rgb, 'pictures/' + filename[0] + '_1.png', img_desc)
-    draw_image(new_rgb, 'pictures/' + filename[0] + '_2.png', img_desc)
-    return [old_rgb, new_rgb]
-
-
-def create_pictures():
-    files = os.listdir('pictures/')
-    for filename in files:
-        if '_' in filename:
-            continue
-
-        print(filename)
-        rgb1, rgb2 = code_picture(filename)
-        y1, u1, v1 = convert_rgb_to_yuv(rgb1)
-        y2, u2, v2 = convert_rgb_to_yuv(rgb2)
-        p = [get_all_params(y1, u1, v1), get_all_params(y2, u2, v2)]
-        # print(p)
-        # global_params.append(p)
+WORK_DIR = 'projectVarya'
+WORK_FILE = 'v02.png'
 
 def get_bin_view(x):
     bn = bin(x)[2:]
     return '0' * (8 - len(bn)) + bn
 
-
-global_params = []
 if __name__ == '__main__':
+    blocks_dir = os.path.join(WORK_DIR, WORK_FILE.split('.')[0] + '_blocks')
 
-    create_pictures()
+    # split_picture(WORK_DIR, WORK_FILE)
+    # create_pictures(WORK_DIR, WORK_FILE)
+    total_comparison(blocks_dir)
     # for i in global_params:
     #     print(i)
 
+    '''
+    Шифрование:
     random_num = random.randint(0, 255)
     key = get_bin_view(random_num)
     print(random_num, key, sep=' ')
@@ -124,3 +61,4 @@ if __name__ == '__main__':
         print('WRONG')
     else:
         print('SUCCESS: x = ' + str(x_count))
+    '''
