@@ -6,10 +6,7 @@ import os
 
 global_params = []
 
-def split_picture(dir, file, block_side=32):
-    filename = file.split('.')[0]
-    blocks_dir = os.path.join(dir, filename + '_blocks')
-
+def split_picture(dir, file, blocks_dir, block_side=32):
     img = Image.open(os.path.join(dir, file))
     width, height = img.size
     block_desc = {
@@ -29,8 +26,7 @@ def split_picture(dir, file, block_side=32):
 
     img.close()
 
-def create_pictures(dir, file):
-    blocks_dir = os.path.join(dir, file.split('.')[0] + '_blocks')
+def create_pictures(dir, file, blocks_dir):
     files = os.listdir(blocks_dir)
 
     for filename in files:

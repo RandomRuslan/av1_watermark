@@ -8,8 +8,9 @@ def get_all_params(y, u, v):
     params.append(get_params(axes[0], y, u, 'u'))
     params.append(get_params(axes[1], y, v, 'v'))
     # params.append(get_params(axes[2], y+y, u+v, 'UV'))
-    fig.tight_layout()
+    # fig.tight_layout()
     # plt.show()
+    plt.close()
     return params
 
 def get_params(ax, x, y, title):
@@ -30,6 +31,8 @@ def get_params(ax, x, y, title):
 
 def inc_float(x):
     lst = list(str(x))[::-1]
+    for i in range(0, 5-lst.index('.')):
+        lst.insert(0, '0')
     # print(x, lst, end='\n')
     for i in range(len(lst)):
         if '0' <= lst[i] <= '9':

@@ -1,9 +1,11 @@
+import time
+
 from conversion import *
 from math_functions import *
 from pictures import *
 from image_diff import *
 
-WORK_DIR = 'projectVarya'
+WORK_DIR = 'pictures/projectVarya'
 WORK_FILE = 'v02.png'
 
 def get_bin_view(x):
@@ -11,11 +13,19 @@ def get_bin_view(x):
     return '0' * (8 - len(bn)) + bn
 
 if __name__ == '__main__':
-    blocks_dir = os.path.join(WORK_DIR, WORK_FILE.split('.')[0] + '_blocks')
+    for block_side in [8, 16, 32]:
+        t1 = time.time()
+        blocks_dir = os.path.join(WORK_DIR, WORK_FILE.split('.')[0] + '_blocks_' + str(block_side))
+        try:
+            os.mkdir(blocks_dir)
+        except OSError:
+            pass
 
-    # split_picture(WORK_DIR, WORK_FILE)
-    # create_pictures(WORK_DIR, WORK_FILE)
-    total_comparison(blocks_dir)
+        split_picture(WORK_DIR, WORK_FILE, blocks_dir, block_side=block_side)
+        create_pictures(WORK_DIR, WORK_FILE, blocks_dir)
+        total_comparison(blocks_dir)
+        t2 = time.time()
+        print('time: ', t2-t1)
     # for i in global_params:
     #     print(i)
 
