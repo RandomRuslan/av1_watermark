@@ -33,6 +33,7 @@ def split_picture(dir, file, blocks_dir, block_side):
 
 
 def create_blocks(blocks_dir):
+    print('_create_blocks_')
     files = os.listdir(blocks_dir)
     for filename in files:
         if filename[0] != '0':
@@ -74,8 +75,8 @@ def code_block(rgb):
 
 
 def compile_pictures(dir, blocks_dir, block_side, img_desc):
-    print('Compile')
-    full_height = full_width = img_desc['size'][0]
+    print('_compile_pictures_')
+    full_width, full_height = img_desc['size']
     for ind in ['1', '2']:
         full_rgb = [(255, 255, 255)] * (full_height*full_width)
 

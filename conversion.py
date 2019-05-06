@@ -19,7 +19,8 @@ def draw_image(rgb, title, img_desc):
     pixels = img.load()
     for i in range(height):
         for j in range(width):
-            pixels[j, i] = rgb[i*height+j]
+            pixels[j, i] = \
+                rgb[i*width+j]
     # img.show()
     img.save(title)
     img.close()
