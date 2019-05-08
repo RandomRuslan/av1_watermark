@@ -29,12 +29,11 @@ def get_params(ax, x, y, title):
     ax.grid()
     return fp
 
-def inc_float(x):
-    lst = list(str(x))[::-1]
-    for i in range(0, 5-lst.index('.')):
-        lst.insert(0, '0')
+def inc_float(x, sign_place):
+    lst = list('%.7f' % x)[::-1]
     # print(x, lst, end='\n')
-    for i in range(len(lst)):
+
+    for i in range(sign_place, len(lst)):
         if '0' <= lst[i] <= '9':
             if lst[i] == '9':
                 lst[i] = '0'
@@ -42,8 +41,6 @@ def inc_float(x):
                 lst[i] = str(int(lst[i])+1)
                 break
     else:
-        # print('round:', round(x))
         return round(x)
 
-    # print(float(''.join(lst[::-1])))
     return float(''.join(lst[::-1]))

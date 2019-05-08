@@ -41,3 +41,19 @@ if not same:
 else:
     print('SUCCESS: x = ' + str(x_count))
 '''
+
+# From code_block
+# old_params, new_params = [], []
+# for k, b in params:
+#     old_params.append([np.float16(k), np.float16(b)])   # ??? float32(k)
+#     new_params.append([inc_float(np.float16(k)), np.float16(b)])
+# old_u = [old_params[0][0] * x + old_params[0][1] for x in y]
+# old_v = [old_params[1][0] * x + old_params[1][1] for x in y]
+# new_u = [new_params[0][0] * x + new_params[0][1] for x in y]
+# new_v = [new_params[1][0] * x + new_params[1][1] for x in y]
+# old_rgb = convert_yuv_to_rgb(y, old_u, old_v)
+# new_rgb = convert_yuv_to_rgb(y, new_u, new_v)
+
+
+# for i in range(0, 5-lst.index('.')):
+#     lst.insert(0, '0')

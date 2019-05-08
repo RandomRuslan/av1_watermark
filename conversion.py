@@ -2,15 +2,13 @@ from PIL import Image
 
 
 def get_rgb(img):
-    # print('get RGB')
     width, height = img.size
     pix = img.load()
 
     rgb = []
     for i in range(height):
         for j in range(width):
-            # print(pix[j,i])
-            rgb.append(pix[j, i][:-1])
+            rgb.append(pix[j, i][:3])
     return rgb
 
 def draw_image(rgb, title, img_desc):
@@ -19,8 +17,7 @@ def draw_image(rgb, title, img_desc):
     pixels = img.load()
     for i in range(height):
         for j in range(width):
-            pixels[j, i] = \
-                rgb[i*width+j]
+            pixels[j, i] = rgb[i*width+j]
     # img.show()
     img.save(title)
     img.close()
@@ -33,11 +30,9 @@ def convert_rgb_to_yuv(rgb):
     u = []
     v = []
     for r, g, b in rgb:
-        # print(r, g, b)
         yi = kr*r + kb*b + (1-kr-kb)*g
         ui = b - yi
         vi = r - yi
-        # print(yi, ui, vi)
         y.append(yi)
         u.append(ui)
         v.append(vi)

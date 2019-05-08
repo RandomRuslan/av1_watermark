@@ -24,7 +24,7 @@ def split_picture(dir, file, blocks_dir, block_side):
             rgb = []
             for ii in range(block_side):
                 for jj in range(block_side):
-                    rgb.append(pixels[j*block_side + jj, i*block_side + ii][:-1])
+                    rgb.append(pixels[j*block_side + jj, i*block_side + ii][:3])
 
             draw_image(rgb, os.path.join(blocks_dir, '_'.join(['0', str(i), str(j)]) + '.png'), block_desc)
 
