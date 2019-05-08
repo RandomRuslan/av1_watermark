@@ -59,17 +59,17 @@ def is_rgb_equal(rgb1, rgb2, show_diff=False):
 
     return False
 
-def total_comparison(dir):
+def total_comparison(dir, sign_place):
     print('_total_comparison_')
     files = os.listdir(dir)
     total = av1 = wmk = 0
-    with open(dir + '_comp.csv', 'w') as out:
+    with open(dir + '_' + str(sign_place) + '_comp.csv', 'w') as out:
         for f in files:
             if f[0] != '0':
                 continue
 
             file, rgb = [], []
-            for i in range(3):
+            for i in range(5):
                 file.append(str(i) + f[1:])
                 img = Image.open(os.path.join(dir, file[i]))
                 rgb.append(get_rgb(img))
@@ -77,15 +77,9 @@ def total_comparison(dir):
 
             line = [file[0][2:]]
             line.extend([get_ssim(file[0], file[1], dir), is_rgb_equal(rgb[0], rgb[1])])    # av1
-            line.extend([get_ssim(file[1], file[2], dir), is_rgb_equal(rgb[1], rgb[2])])    # wmk
-            out.write(' | '.join([str(i) for i in line]) + '\n')
-            # print(file[0][2:])
-            # print('av1:\tSSIM = {}\tRGB_equal = {}'.format(get_ssim(file[0], file[1], dir), is_rgb_equal(rgb[0], rgb[1])))
-            # print('wmk:\tSSIM = {}\tRGB_equal = {}'.format(get_ssim(file[1], file[2], dir), is_rgb_equal(rgb[1], rgb[2])))
-            # print()
-            total += 1
-            if is_rgb_equal(rgb[0], rgb[1]):
-                av1 += 1
-            if is_rgb_equal(rgb[1], rgb[2]):
-                wmk += 1
-    print("total: %d\tav1: %d\twmk: %d" % (total, av1, wmk))
+
+            line.extend([get_ssim(file[1], file[2], dir), is_rgb_equal(rgb[1], rgb[2])])    # wmk for u
+            line.extend([get_ssim(file[1], file[3], dir), is_rgb_equal(rgb[1], rgb[3])])    # wmk for v
+            line.extend([get_ssim(file[1], file[4], dir), is_rgb_equal(rgb[1], rgb[4])])    # wmk for both
+
+            out.write(';'.join([str(i) for i in line]) + '\n')

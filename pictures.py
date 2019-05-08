@@ -32,7 +32,7 @@ def split_picture(dir, file, blocks_dir, block_side):
     return img_desc
 
 
-def create_blocks(blocks_dir):
+def create_blocks(blocks_dir, sign_place):
     print('_create_blocks_')
     files = os.listdir(blocks_dir)
     for filename in files:
@@ -47,37 +47,46 @@ def create_blocks(blocks_dir):
         rgb = get_rgb(img)
         img.close()
 
-        old_rgb, new_rgb = code_block(rgb)
-        draw_image(old_rgb, os.path.join(blocks_dir, '1' + filename[1:]), img_desc)
-        draw_image(new_rgb, os.path.join(blocks_dir, '2' + filename[1:]), img_desc)
+        counted_rgd = code_block(rgb, sign_place)
+        for i in range(4):
+            draw_image(counted_rgd[i], os.path.join(blocks_dir, str(i+1) + filename[1:]), img_desc)
 
 
-def code_block(rgb):
+def code_block(rgb, sign_place):
     y, u, v = convert_rgb_to_yuv(rgb)
-    params = get_all_params(y, u, v)
-    # print(y, u, v, params, sep='\n')
+    coef_u, coef_v = get_all_params(y, u, v)
 
-    old_params, new_params = [], []
-    for k, b in params:
-        old_params.append([np.float16(k), np.float16(b)])   # ??? float32(k)
-        new_params.append([inc_float(np.float16(k)), np.float16(b)])
+    k_u, b_u = np.float16(coef_u[0]), np.float16(coef_u[1])
+    k_v, b_v = np.float16(coef_v[0]), np.float16(coef_v[1])
+    inc_k_u = inc_float(np.float16(coef_u[0]), sign_place)  # ??? float32(k)
+    inc_k_v = inc_float(np.float16(coef_v[0]), sign_place)
 
-    old_u = [old_params[0][0] * x + old_params[0][1] for x in y]
-    old_v = [old_params[1][0] * x + old_params[1][1] for x in y]
-    new_u = [new_params[0][0] * x + new_params[0][1] for x in y]
-    new_v = [new_params[1][0] * x + new_params[1][1] for x in y]
-    # print(u, old_u, new_u, '', v, old_v, new_v, sep='\n')
+    params_origin = ((k_u, b_u), (k_v, b_v))
+    params_change_u = ((inc_k_u, b_u), (k_v, b_v))
+    params_change_v = ((k_u, b_u), (inc_k_v, b_v))
+    params_change_all = ((inc_k_u, b_u), (inc_k_v, b_v))
 
-    old_rgb = convert_yuv_to_rgb(y, old_u, old_v)
-    new_rgb = convert_yuv_to_rgb(y, new_u, new_v)
-    # print(rgb, old_rgb, new_rgb, sep='\n')
-    return [old_rgb, new_rgb]
+    counted_u, counted_v = [0] * 4, [0] * 4
+    counted_u[0] = [params_origin[0][0] * x + params_origin[0][1] for x in y]
+    counted_v[0] = [params_origin[1][0] * x + params_origin[1][1] for x in y]
+
+    counted_u[1] = [params_change_u[0][0] * x + params_change_u[0][1] for x in y]
+    counted_v[1] = [params_change_u[1][0] * x + params_change_u[1][1] for x in y]
+
+    counted_u[2] = [params_change_v[0][0] * x + params_change_v[0][1] for x in y]
+    counted_v[2] = [params_change_v[1][0] * x + params_change_v[1][1] for x in y]
+
+    counted_u[3] = [params_change_all[0][0] * x + params_change_all[0][1] for x in y]
+    counted_v[3] = [params_change_all[1][0] * x + params_change_all[1][1] for x in y]
+
+    counted_rgb = [convert_yuv_to_rgb(y, counted_u[i], counted_v[i]) for i in range(4)]
+    return counted_rgb
 
 
 def compile_pictures(dir, blocks_dir, block_side, img_desc):
     print('_compile_pictures_')
     full_width, full_height = img_desc['size']
-    for ind in ['1', '2']:
+    for ind in ['1', '2', '3', '4']:
         full_rgb = [(255, 255, 255)] * (full_height*full_width)
 
         files = os.listdir(blocks_dir)
