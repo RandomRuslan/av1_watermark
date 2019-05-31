@@ -4,10 +4,6 @@ from pictures import *
 from image_diff import *
 
 
-def get_bin_view(x):
-    bn = bin(x)[2:]
-    return '0' * (8 - len(bn)) + bn
-
 
 def start(WORK_FILE, WORK_DIR, sign_place):
     print('Start ' + WORK_FILE)

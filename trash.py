@@ -4,6 +4,10 @@ random_num = random.randint(0, 255)
 key = get_bin_view(random_num)
 print(random_num, key, sep=' ')
 
+def get_bin_view(x):
+    bn = bin(x)[2:]
+    return '0' * (8 - len(bn)) + bn
+
 decrypted_key = ''
 for i in range(8):
     fl = '1' if key[i] == '0' else '2'
